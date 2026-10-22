@@ -1,0 +1,49 @@
+name: CI
+
+# Builds the kernel and checks the result on a clean Ubuntu machine.
+# This does NOT boot the kernel. A QEMU boot test is a separate task (T002).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Read-only access to repository contents. No secrets are used.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build kernel and ISO
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential binutils grub-pc-bin grub-common xorriso mtools
+
+      - name: Show tool versions
+        run: |
+          gcc --version | head -n 1
+          ld --version | head -n 1
+          grub-mkrescue --version
+          xorriso -version 2>&1 | head -n 1
+
+      - name: Build kernel and ISO
+        run: bash scripts/build.sh
+
+      - name: Verify the kernel is a Multiboot v1 kernel
+        run: grub-file --is-x86-multiboot build/myos
+
+      - name: Verify the kernel and ISO files exist and are not empty
+        run: |
+          test -s build/myos
+          test -s build/myos.iso
+          ls -l build/myos build/myos.iso
