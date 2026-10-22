@@ -55,7 +55,7 @@ This is the persistent task queue. Agents resume work here after any interruptio
 
 ### T002: Serial output and a headless QEMU boot test
 - **Priority:** 2
-- **Status:** In review
+- **Status:** Done
 - **Depends on:** T001, T007
 - **Goal:** Prove automatically that the kernel boots, without a human looking at a screen.
 - **Acceptance criteria:**
@@ -63,15 +63,17 @@ This is the persistent task queue. Agents resume work here after any interruptio
   2. A script boots `build/myos.iso` in QEMU without a display, captures serial output, and succeeds only if the expected text appears within a time limit.
   3. The script gives a clear failure if the text never appears or QEMU cannot start.
   4. The check runs in CI.
-- **Evidence:** GitHub Actions run #39775161552 passed all steps, including kernel/ISO build, Multiboot validation, and the headless QEMU serial boot test: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39775161552. The PR remains open for owner review.
+- **Evidence:** PR #5 merged into `main` (commit `6a7022a`). GitHub Actions run #39775161552 passed all steps: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39775161552.
 
 ### T003: Make the build tool setup reproducible
 - **Priority:** 3
-- **Status:** Todo
+- **Status:** In review
 - **Depends on:** T001
 - **Goal:** One documented command sequence sets up the build tools on a clean Ubuntu machine, matching what CI uses.
-- **Acceptance criteria:** The package list in `README.md` and CI agree, and a fresh-runner CI run proves the list is sufficient.
-- **Evidence:** None yet.
+- **Acceptance criteria:**
+  1. The package list in `README.md` and CI agree (`build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`).
+  2. A fresh-runner CI run proves the package list is sufficient.
+- **Evidence:** Package installation instructions in `README.md` Section 2 updated to list `build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`, matching `.github/workflows/ci.yml`. Verification pending CI run on this pull request.
 
 ### T004: Stage 1 design: the personal AI assistant as an application
 - **Priority:** 4
