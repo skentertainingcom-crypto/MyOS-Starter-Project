@@ -32,7 +32,7 @@ def main() -> int:
         try:
             message = input("You> ")
         except (EOFError, KeyboardInterrupt):
-            print("\\nGoodbye.")
+            print("\nGoodbye.")
             return 0
 
         if message.strip().lower() == "/exit":
