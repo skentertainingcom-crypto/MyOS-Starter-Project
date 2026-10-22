@@ -23,30 +23,46 @@ This is the persistent task queue. Agents resume work from here after any interr
 
 ### T000: Project-management foundation
 - **Priority:** 0
-- **Status:** In review
+- **Status:** Done
 - **Goal:** Add `ROADMAP.md`, `TASKS.md`, `AGENTS.md`, and `.gitignore`.
 - **Acceptance criteria:**
   - The four files exist on `main`, reviewed by the project owner.
   - No existing source file was changed.
-- **Evidence:** Pull request from branch `agent/project-foundation` (not merged). Becomes `Done` only after the owner merges it.
+- **Evidence:** Pull request #1 was merged by the owner into `main` (merge commit `483c347`). The PR changed only the four new files.
 - **Notes:** This task does not start continuous autonomous execution. It only creates the documents agents will follow.
 
 ### T001: Build-output exclusions and automated kernel build validation
 - **Priority:** 1
-- **Status:** In progress
+- **Status:** Blocked
 - **Goal:** Generated files are never committed, and every change is automatically checked to still build as a valid Multiboot kernel.
 - **Acceptance criteria:**
-  1. `.gitignore` excludes `build/` and does not exclude any tracked file. (Proposed in T000, pending merge.)
-  2. A GitHub Actions workflow installs the build tools on a clean Ubuntu runner and runs `scripts/build.sh`.
-  3. The workflow fails if the build fails or the Multiboot check fails.
-  4. A pull request shows a green workflow run, and a deliberately broken change is shown to turn it red (or this is documented as untested).
-- **Evidence:** None yet. Criterion 1 is proposed in T000 but not merged. Criteria 2 to 4 are not started.
-- **Blocker risk:** Creating files under `.github/workflows` needs the Claude GitHub App to have workflow permission. If a push is rejected for that reason, set the status to `Blocked` and ask the owner to grant it.
+  1. `.gitignore` excludes `build/` and does not exclude any tracked file. **Met:** merged in T000 (`483c347`).
+  2. A GitHub Actions workflow installs the build tools on a clean Ubuntu runner and runs `scripts/build.sh`. **Met:** `.github/workflows/ci.yml` (PR #2). In the first real run the tool install succeeded and `scripts/build.sh` was executed.
+  3. The workflow fails if the build fails or the Multiboot check fails. **Partly shown:** the first run failed at the "Build kernel and ISO" step and the later verification steps were skipped. The exact error text could not be retrieved (log download is blocked from the agent environment), so the cause of that failure is not confirmed by CI output.
+  4. A pull request shows a green workflow run, and a deliberately broken change is shown to turn it red (or this is documented as untested). **Not met:** no green run exists. The red-on-broken-change check was not done separately.
+- **Evidence:**
+  - CI run (failed at "Build kernel and ISO"): https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39763771157
+  - Local check, not CI (compile and link only, in a temporary folder; `grub-file`, `grub-mkrescue` and QEMU were not available): the kernel compiles and links, but the Multiboot v1 header is at file offset 8212. The Multiboot specification requires it within the first 8192 bytes, so `grub-file` is expected to reject it. In the same check the `.multiboot` section had no allocation flag and `.text` was placed at address 0 instead of 1 MiB. On a temporary copy only, changing `.section .multiboot` to `.section .multiboot, "a"` in `src/boot.s` moved the header to offset 4096 and the code to `0x101000`. This was not verified with `grub-file` or by booting.
+  - Not tested: the ISO build, `grub-file`, and any QEMU boot.
+- **Blocker:** The current kernel very likely cannot pass the Multiboot check, so CI cannot go green. Fixing it means editing `src/boot.s`, which T001 was told not to change. See T007. Needs the owner's approval to change kernel source.
+- **Notes:** CI warnings seen in the run: `actions/checkout@v4` runs on a deprecated Node.js version, and the `ubuntu-latest` label is announced to move to Ubuntu 26 from October 19, 2026. Neither caused the failure. Pinning the runner version is a possible later improvement.
+
+### T007: Fix the Multiboot header section so the kernel passes the Multiboot check
+- **Priority:** 1 (unblocks T001)
+- **Status:** Todo
+- **Needs owner approval:** changes kernel source (`src/boot.s`), which agents may not edit without it.
+- **Goal:** The built kernel is a valid Multiboot v1 kernel that GRUB accepts.
+- **Acceptance criteria:**
+  1. The Multiboot header is within the first 8192 bytes of `build/myos` and the sections are placed at 1 MiB and above (checked with `readelf`).
+  2. `grub-file --is-x86-multiboot build/myos` succeeds in CI.
+  3. The CI workflow from T001 is green on the pull request.
+  4. Only the minimum lines needed are changed. A candidate fix, tested on a temporary copy only, is adding the allocation flag: `.section .multiboot, "a"`. It must be confirmed in CI before this task is marked Done.
+- **Evidence:** None yet.
 
 ### T002: Serial output and a headless QEMU boot test
 - **Priority:** 2
 - **Status:** Todo
-- **Depends on:** T001
+- **Depends on:** T001, T007
 - **Goal:** Prove automatically that the kernel boots, without a human looking at a screen.
 - **Acceptance criteria:**
   1. The kernel also writes `Welcome to MyOS!` to the serial port (COM1), in addition to the existing VGA output. The VGA output is unchanged.
