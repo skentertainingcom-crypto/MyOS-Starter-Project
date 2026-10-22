@@ -55,7 +55,7 @@ This is the persistent task queue. Agents resume work here after any interruptio
 
 ### T002: Serial output and a headless QEMU boot test
 - **Priority:** 2
-- **Status:** In progress
+- **Status:** In review
 - **Depends on:** T001, T007
 - **Goal:** Prove automatically that the kernel boots, without a human looking at a screen.
 - **Acceptance criteria:**
@@ -63,7 +63,7 @@ This is the persistent task queue. Agents resume work here after any interruptio
   2. A script boots `build/myos.iso` in QEMU without a display, captures serial output, and succeeds only if the expected text appears within a time limit.
   3. The script gives a clear failure if the text never appears or QEMU cannot start.
   4. The check runs in CI.
-- **Evidence:** Implementation is on branch `agent/t002-qemu-boot-test`. Awaiting the pull-request CI run; no QEMU test result is claimed yet.
+- **Evidence:** GitHub Actions run #39775161552 passed all steps, including kernel/ISO build, Multiboot validation, and the headless QEMU serial boot test: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39775161552. The PR remains open for owner review.
 
 ### T003: Make the build tool setup reproducible
 - **Priority:** 3
