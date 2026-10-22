@@ -67,11 +67,13 @@ This is the persistent task queue. Agents resume work here after any interruptio
 
 ### T003: Make the build tool setup reproducible
 - **Priority:** 3
-- **Status:** Todo
+- **Status:** In review
 - **Depends on:** T001
 - **Goal:** One documented command sequence sets up the build tools on a clean Ubuntu machine, matching what CI uses.
-- **Acceptance criteria:** The package list in `README.md` and CI agree, and a fresh-runner CI run proves the list is sufficient.
-- **Evidence:** None yet.
+- **Acceptance criteria:**
+  1. The package list in `README.md` and CI agree. The README now lists `build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`, matching `.github/workflows/ci.yml`.
+  2. A fresh-runner CI run proves the package list is sufficient. Pending the CI result for this pull request.
+- **Evidence:** The CI workflow on `main` installs the same package list and includes the kernel build, Multiboot check, ISO checks, and headless QEMU boot test. This task remains in review until this branch's CI run passes.
 
 ### T004: Stage 1 design: the personal AI assistant as an application
 - **Priority:** 4
