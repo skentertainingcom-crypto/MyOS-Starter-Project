@@ -1,8 +1,8 @@
 name: CI
 
-# Builds the kernel and checks the result on a clean Ubuntu machine.
-# This does NOT boot the kernel. A QEMU boot test is a separate task (T002).
-
+# Builds the kernel and ISO on a clean Ubuntu machine.
+# QEMU is installed here so the runner has the same toolchain as the README
+# and can support the headless boot test when that step is enabled.
 on:
   push:
     branches: [main]
@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential binutils grub-pc-bin grub-common xorriso mtools
+            build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86
 
       - name: Show tool versions
         run: |
@@ -35,6 +35,7 @@ jobs:
           ld --version | head -n 1
           grub-mkrescue --version
           xorriso -version 2>&1 | head -n 1
+          qemu-system-i386 --version | head -n 1
 
       - name: Build kernel and ISO
         run: bash scripts/build.sh
