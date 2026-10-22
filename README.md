@@ -40,11 +40,11 @@ If that command is not recognized or installation fails:
 
 ## 2. Install the build tools
 
-In the Ubuntu terminal, run:
+In the Ubuntu terminal, run the same package list used by the GitHub Actions CI workflow:
 
 ```bash
 sudo apt update
-sudo apt install build-essential binutils grub-pc-bin grub-common xorriso make qemu-system-x86
+sudo apt install build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86
 ```
 
 Type `Y` if asked to confirm. Enter your Ubuntu password if prompted (the terminal will not show characters while you type it).
