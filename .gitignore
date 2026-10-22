@@ -1,0 +1,20 @@
+# Generated build output (created by scripts/build.sh)
+build/
+
+# Stray build artifacts if tools are run by hand
+*.o
+*.iso
+
+# Editor and OS clutter
+*.swp
+*~
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets must never be committed
+.env
+.env.*
+*.pem
+*.key
