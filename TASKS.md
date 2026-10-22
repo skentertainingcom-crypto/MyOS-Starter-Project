@@ -67,21 +67,21 @@ This is the persistent task queue. Agents resume work here after any interruptio
 
 ### T003: Make the build tool setup reproducible
 - **Priority:** 3
-- **Status:** In review
+- **Status:** Done
 - **Depends on:** T001
 - **Goal:** One documented command sequence sets up the build tools on a clean Ubuntu machine, matching what CI uses.
 - **Acceptance criteria:**
   1. The package list in `README.md` and CI agree (`build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`).
   2. A fresh-runner CI run proves the package list is sufficient.
-- **Evidence:** Package installation instructions in `README.md` Section 2 updated to list `build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`, matching `.github/workflows/ci.yml`. Verification pending CI run on this pull request.
+- **Evidence:** PR #9 merged into `main` (merge commit `5cb2cbc38b57270db6b2e01990a255d31afcad7d`). GitHub Actions run for PR #9 passed before merge; see https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/pull/9.
 
 ### T004: Stage 1 design: the personal AI assistant as an application
 - **Priority:** 4
-- **Status:** Blocked
+- **Status:** In review
 - **Goal:** Define what a usable personal assistant means and how it will be built.
 - **Acceptance criteria:** A document states platform, language, AI provider and reasons; lists the first three capabilities and tests; states costs and secrets needed without including secrets; and is approved by the project owner.
-- **Blocker:** Needs the owner's decisions on platform, AI provider, and budget.
-- **Evidence:** None yet.
+- **Decision:** The project owner delegated the Stage 1 design choices to the assistant on 2026-10-23. Proposed choices are documented in `docs/STAGE1_DESIGN.md` and await review/merge.
+- **Evidence:** Design proposal added in this PR. No prototype or live API call is claimed.
 
 ### T005: Stage 1 prototype: a minimal assistant application
 - **Priority:** 5
