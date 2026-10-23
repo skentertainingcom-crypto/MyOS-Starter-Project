@@ -100,7 +100,7 @@ This is the persistent task queue. Agents resume work here after any interruptio
 - **Evidence:**
   - `python -m unittest discover -s tests -v`: all six test methods passed in a temporary local copy of the branch's assistant core and tests, including invalid context-limit cases (0, -1, boolean, float, string, and None). No network or credentials were used.
   - CLI smoke test: piping `hello` then `/exit` produced the deterministic mock reply and exited cleanly; `--context-limit 0` displayed a clear argument error and exited with code 2.
-  - GitHub Actions run #39856773674 passed the kernel build, Multiboot and ISO checks, and headless QEMU serial boot check: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39856773674. The existing workflow does not run Python unit tests, so the assistant tests were verified locally only.
+  - GitHub Actions run #39978085289 on the latest code-bearing PR head passed the kernel build, Multiboot and ISO checks, and headless QEMU serial boot check; its log includes `Welcome to MyOS!`: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39978085289. Earlier run #39856773674 also passed these checks. The existing workflow does not run Python unit tests, so the assistant tests were verified locally only.
   - Interactive Windows/WSL use has not been tested.
 
 ### T006: Safety rules for tool use and memory
