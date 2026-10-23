@@ -43,7 +43,7 @@ class AssistantTests(unittest.TestCase):
             assistant.reply("  ")
 
     def test_invalid_context_limit_is_rejected(self) -> None:
-        for invalid in (0, -1, True):
+        for invalid in (0, -1, True, 1.5, "2", None):
             with self.subTest(invalid=invalid):
                 with self.assertRaisesRegex(ValueError, "positive integer"):
                     Assistant(context_limit=invalid)
