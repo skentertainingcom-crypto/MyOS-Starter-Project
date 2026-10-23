@@ -73,23 +73,35 @@ This is the persistent task queue. Agents resume work here after any interruptio
 - **Acceptance criteria:**
   1. The package list in `README.md` and CI agree (`build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`).
   2. A fresh-runner CI run proves the package list is sufficient.
-- **Evidence:** PR #9 merged into `main` (merge commit `5cb2cbc38b57270db6b2e01990a255d31afcad7d`). GitHub Actions run for PR #9 passed before merge; see https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/pull/9.
+- **Evidence:**
+  - PR #9 merged into `main` (merge commit `5cb2cbc38b57270db6b2e01990a255d31afcad7d`). Fresh-runner GitHub Actions run #39854222749 passed package installation, kernel/ISO build, Multiboot validation, non-empty artifact checks, and the headless QEMU serial boot test: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39854222749.
+  - Earlier PR #6 run #39798203372 also passed the build, Multiboot, and non-empty kernel/ISO checks. PR #6 was closed unmerged after PR #9 completed T003: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39798203372.
 
 ### T004: Stage 1 design: the personal AI assistant as an application
 - **Priority:** 4
-- **Status:** In review
+- **Status:** Done
 - **Goal:** Define what a usable personal assistant means and how it will be built.
 - **Acceptance criteria:** A document states platform, language, AI provider and reasons; lists the first three capabilities and tests; states costs and secrets needed without including secrets; and is approved by the project owner.
-- **Decision:** The project owner delegated the Stage 1 design choices to the assistant on 2026-10-23. Proposed choices are documented in `docs/STAGE1_DESIGN.md` and await review/merge.
-- **Evidence:** Design proposal added in this PR. No prototype or live API call is claimed.
+- **Decision:** The project owner approved the design and requested offline/mock-only operation on 2026-10-23.
+- **Evidence:** PR #10 merged by the owner into `main` in merge commit `60b7026f161633a178507e7eeeb2194719dfee65`; see https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/pull/10.
 
 ### T005: Stage 1 prototype: a minimal assistant application
 - **Priority:** 5
-- **Status:** Blocked
+- **Status:** In review
 - **Depends on:** T004
-- **Goal:** Build the smallest working assistant that can hold a text conversation.
-- **Acceptance criteria:** To be written in T004. Do not start until they exist.
-- **Evidence:** None yet.
+- **Goal:** Build the smallest working assistant that can hold a text conversation without network access or paid services.
+- **Acceptance criteria:**
+  1. Starts in offline/mock mode without requiring or reading an API key.
+  2. Provides deterministic replies and accepts multiple conversation turns.
+  3. Keeps recent context in memory only, bounded by a configurable positive message limit.
+  4. Rejects empty messages and invalid context limits with clear messages.
+  5. Contains no network client, tool execution, persistent chat storage, or kernel-source changes.
+  6. Unit tests run without network access or credentials.
+- **Evidence:**
+  - `python -m unittest discover -s tests -v`: all six test methods passed in a temporary local copy of the branch's assistant core and tests, including invalid context-limit cases (0, -1, boolean, float, string, and None). No network or credentials were used.
+  - CLI smoke test: piping `hello` then `/exit` produced the deterministic mock reply and exited cleanly; `--context-limit 0` displayed a clear argument error and exited with code 2.
+  - GitHub Actions run #39978085289 on the latest code-bearing PR head passed the kernel build, Multiboot and ISO checks, and headless QEMU serial boot check; its log includes `Welcome to MyOS!`: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39978085289. Earlier run #39856773674 also passed these checks. The existing workflow does not run Python unit tests, so the assistant tests were verified locally only.
+  - Interactive Windows/WSL use has not been tested.
 
 ### T006: Safety rules for tool use and memory
 - **Priority:** 6
