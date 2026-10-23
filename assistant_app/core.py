@@ -29,7 +29,11 @@ class Assistant:
     history: list[dict[str, str]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        if isinstance(self.context_limit, bool) or self.context_limit < 1:
+        if (
+            isinstance(self.context_limit, bool)
+            or not isinstance(self.context_limit, int)
+            or self.context_limit < 1
+        ):
             raise ValueError("context_limit must be a positive integer")
 
     def reply(self, message: str) -> str:
