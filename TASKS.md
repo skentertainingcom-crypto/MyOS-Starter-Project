@@ -73,7 +73,9 @@ This is the persistent task queue. Agents resume work here after any interruptio
 - **Acceptance criteria:**
   1. The package list in `README.md` and CI agree (`build-essential binutils grub-pc-bin grub-common xorriso mtools qemu-system-x86`).
   2. A fresh-runner CI run proves the package list is sufficient.
-- **Evidence:** PR #9 merged into `main` (merge commit `5cb2cbc38b57270db6b2e01990a255d31afcad7d`). GitHub Actions run for PR #9 passed before merge; see https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/pull/9.
+- **Evidence:**
+  - PR #9 merged into `main` (merge commit `5cb2cbc38b57270db6b2e01990a255d31afcad7d`). Fresh-runner GitHub Actions run #39854222749 passed package installation, kernel/ISO build, Multiboot validation, non-empty artifact checks, and the headless QEMU serial boot test: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39854222749.
+  - Earlier PR #6 run #39798203372 also passed the build, Multiboot, and non-empty kernel/ISO checks. PR #6 was closed unmerged after PR #9 completed T003: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39798203372.
 
 ### T004: Stage 1 design: the personal AI assistant as an application
 - **Priority:** 4
@@ -95,7 +97,11 @@ This is the persistent task queue. Agents resume work here after any interruptio
   4. Rejects empty messages and invalid context limits with clear messages.
   5. Contains no network client, tool execution, persistent chat storage, or kernel-source changes.
   6. Unit tests run without network access or credentials.
-- **Evidence:** Six unit tests passed locally in the assistant prototype test harness. The same tests are committed in `tests/test_assistant.py`. GitHub CI and interactive terminal behavior still need verification by PR checks/review.
+- **Evidence:**
+  - `python -m unittest discover -s tests -v`: all six test methods passed in a temporary local copy of the branch's assistant core and tests, including invalid context-limit cases (0, -1, boolean, float, string, and None). No network or credentials were used.
+  - CLI smoke test: piping `hello` then `/exit` produced the deterministic mock reply and exited cleanly; `--context-limit 0` displayed a clear argument error and exited with code 2.
+  - GitHub Actions run #39856773674 passed the kernel build, Multiboot and ISO checks, and headless QEMU serial boot check: https://github.com/skentertainingcom-crypto/MyOS-Starter-Project/actions/runs/39856773674. The existing workflow does not run Python unit tests, so the assistant tests were verified locally only.
+  - Interactive Windows/WSL use has not been tested.
 
 ### T006: Safety rules for tool use and memory
 - **Priority:** 6
